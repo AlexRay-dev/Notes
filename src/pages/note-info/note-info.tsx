@@ -1,8 +1,8 @@
 import React, {FC, useState} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import {NavLink, useNavigate, useParams} from "react-router-dom";
 import {
   Box,
-  Divider, Fab,
+  Divider,
   IconButton,
   Stack,
   Typography
@@ -10,56 +10,48 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import theme from "../../shared/ui/theme";
-import {useTypedSelector} from "../../hooks/redux";
-import RemoveDialog from "../../components/note-modal/remove-dialog";
-import NoteModal from "../../components/note-modal/note-modal";
-import {MODAL_TYPE} from "../../shared/consts";
-import {CustomButton} from '../../shared/ui/custom-components/custom-button';
-import {selectNotes} from "../../store/reducers/notesSlice/notesSlice";
-import {INote} from "../../store/reducers/notesSlice/interface";
-import AddIcon from "@mui/icons-material/Add";
-import {CustomFab} from "../../shared/ui/custom-components/custom-fab";
+import {useTypedSelector} from "../../core/hooks/redux";
+import {selectNotes} from "../../core/store/reducers/notesSlice/notesSlice";
+import {INote} from "../../core/store/reducers/notesSlice/interface";
+import {CustomHidingButton} from '../../core/styled-components/custom-button';
+import {CustomFab} from '../../core/styled-components/custom-fab';
+import {NoteInfoBackButton, NoteInfoInner, NoteInfoTitle} from "./styled";
+import RemoveDialog from "../../components/modals/remove-dialog";
+import NoteModal from "../../components/modals/note-modal";
+import {MODAL_TYPE} from "../../core/types/types";
 
 const NoteInfo: FC = () => {
-  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
-  const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false);
+  const [isOpenRemoveDialog, setIsOpenRemoveDialog] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  const {id} = useParams()
-  const {notes} = useTypedSelector(selectNotes)
-  const currentNote = notes.find((note: INote) => note.id === id)
+  const {id} = useParams();
+  const {notes} = useTypedSelector(selectNotes);
+  const currentNote = notes.find((note: INote) => note.id === id);
 
-  if (!currentNote || !id) return <h2>Заметка не найдена...</h2>;
+  if (!currentNote || !id) return (
+    <Typography variant="h4" pt="84px">Заметка не найдена... Вернуться на <NavLink to="/">главную</NavLink></Typography>
+  );
 
   return (
-    <Box pt={"27px"} sx={{
-      minHeight: "calc(100vh - 72px)"
-    }}>
-      <IconButton aria-label="back" onClick={() => navigate('/')} sx={{
-        color: "#E6E6E6",
-        ":hover": {
-          color: theme.palette.secondary.light
-        }
-      }}>
+    <NoteInfoInner>
+      <NoteInfoBackButton aria-label="back" onClick={() => navigate('/')}>
         <ArrowBackIcon/>
-      </IconButton>
-      <Stack direction="row" justifyContent="space-between" mb={"50px"} mt={"20px"}>
-        <Typography component="h2" variant="h2" sx={{
-          wordWrap: "break-word", [theme.breakpoints.down("sm")]: {
-            fontSize: "28px"
-          }
-        }}>
+      </NoteInfoBackButton>
+
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb="50px" mt="23px">
+        <NoteInfoTitle variant="h2">
           {currentNote.title}
-        </Typography>
-        <Box ml={"30px"}>
-          <CustomButton
+        </NoteInfoTitle>
+
+        <Box ml="30px">
+          <CustomHidingButton
             onClick={() => setIsOpenEditModal(true)}
             startIcon={<EditOutlinedIcon/>}
-            variant="contained"
-            sx={{display: {"xs": "none", "sm": "flex"}}}>
+            variant="contained">
             Править заметку
-          </CustomButton>
+          </CustomHidingButton>
+
           <CustomFab
             onClick={() => setIsOpenEditModal(true)}
             color="primary"
@@ -70,10 +62,10 @@ const NoteInfo: FC = () => {
       </Stack>
 
       <Box>
-        <Typography variant={"body1"} color={"secondary.light"} mb={"24px"}>
+        <Typography variant="body1" color="secondary.light" mb="24px">
           {currentNote.comment}
         </Typography>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={"33px"}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb="33px">
           <Typography variant="body2">
             {currentNote.date}
           </Typography>
@@ -82,12 +74,12 @@ const NoteInfo: FC = () => {
             <DeleteOutlineOutlinedIcon/>
           </IconButton>
         </Stack>
-        <Divider variant="fullWidth" color={"#EDEEF2"}/>
+        <Divider variant="fullWidth" color="#EDEEF2"/>
       </Box>
 
       <RemoveDialog isOpen={isOpenRemoveDialog} setIsOpen={setIsOpenRemoveDialog} id={id}/>
       <NoteModal isOpen={isOpenEditModal} setIsOpen={setIsOpenEditModal} modalType={MODAL_TYPE.EDIT} note={currentNote}/>
-    </Box>
+    </NoteInfoInner>
   );
 };
 

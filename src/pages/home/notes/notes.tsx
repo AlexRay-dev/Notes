@@ -1,13 +1,14 @@
 import React, {FC} from 'react';
 import {Grid, Typography} from "@mui/material";
-import NoteCard from "./note-card";
-import {useTypedSelector} from "../../../hooks/redux";
+import NoteCard from "./note-card/note-card";
+import {useTypedSelector} from "../../../core/hooks/redux";
+import {selectNotes} from "../../../core/store/reducers/notesSlice/notesSlice";
 
 const Notes: FC = () => {
-  const {notes} = useTypedSelector(state => state.notesReducer)
-  const isNotesListEmpty = !notes.length
+  const {notes} = useTypedSelector(selectNotes);
+  const isNotesListEmpty = !notes.length;
 
-  if (isNotesListEmpty) return <Typography variant={"h4"}>Список заметок пуст</Typography>
+  if (isNotesListEmpty) return <Typography variant={"h4"}>Список заметок пуст</Typography>;
 
   return (
     <Grid container spacing={2}>

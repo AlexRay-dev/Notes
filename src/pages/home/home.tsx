@@ -1,26 +1,26 @@
 import React, {FC, useState} from 'react';
-import {Box, Stack, Typography} from "@mui/material";
+import {Stack, Typography} from "@mui/material";
 import Notes from "./notes/notes";
 import AddIcon from '@mui/icons-material/Add';
-import NoteModal from "../../components/note-modal/note-modal";
-import {MODAL_TYPE} from "../../shared/consts";
-import {CustomButton} from '../../shared/ui/custom-components/custom-button';
-import {CustomFab} from '../../shared/ui/custom-components/custom-fab';
+import {CustomFab} from '../../core/styled-components/custom-fab';
+import {HomeInner, HomeList} from "./styled";
+import {CustomHidingButton} from "../../core/styled-components/custom-button";
+import NoteModal from "../../components/modals/note-modal";
+import {MODAL_TYPE} from "../../core/types/types";
 
 const Home: FC = () => {
-  const [isOpenAddNoteModal, setIsOpenAddNoteModal] = useState(false)
+  const [isOpenAddNoteModal, setIsOpenAddNoteModal] = useState<boolean>(false);
 
   return (
-    <Box sx={{minHeight: "calc(100vh - 72px)", pt: {"xs": "20px", "sm": "84px"}}}>
+    <HomeInner>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography component="h2" variant="h2">Заметки</Typography>
 
-        <CustomButton
+        <CustomHidingButton
           onClick={() => setIsOpenAddNoteModal(true)}
-          startIcon={<AddIcon/>} variant={"contained"}
-          sx={{display: {"xs": "none", "sm": "flex"}, maxWidth: "230px"}}>
+          startIcon={<AddIcon/>} variant="contained">
           Добавить заметку
-        </CustomButton>
+        </CustomHidingButton>
         <CustomFab
           onClick={() => setIsOpenAddNoteModal(true)}
           color="primary"
@@ -28,12 +28,13 @@ const Home: FC = () => {
           <AddIcon/>
         </CustomFab>
       </Stack>
-      <Box sx={{pb: "20px", pt: {"xs": "20px", "sm": "70px"}}}>
+
+      <HomeList>
         <Notes/>
-      </Box>
+      </HomeList>
 
       <NoteModal isOpen={isOpenAddNoteModal} setIsOpen={setIsOpenAddNoteModal} modalType={MODAL_TYPE.SAVE}/>
-    </Box>
+    </HomeInner>
   );
 };
 
